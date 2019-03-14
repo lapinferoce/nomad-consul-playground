@@ -1,0 +1,37 @@
+#- name: install dnf plugins
+#  dnf: 
+#    name: dnf-plugins-core
+#    state: present
+#
+#- name: install docker ce repo
+#  yum_repository:
+#    name: Docker CE 
+#    description: Docker ce 
+#    baseurl: https://download.docker.com/linux/fedora/docker-ce.repo
+#
+#- name: install docker
+#  dnf:
+#    name: docker-ce
+#    state: present
+#
+- name: install docker
+  dnf: 
+     name: docker
+     state: present
+
+- name: install docker python module without proxy
+  pip:
+    name: docker-py
+    state: present
+    executable: pip3
+
+- name: update docker daemon cgroup
+  shell: |
+    sed -i 's/cgroupdriver=systemd/cgroupdriver=cgroupfs/' /usr/lib/systemd/system/docker.service
+
+- name: start docker daemon
+  systemd:
+    name: docker 
+    state: started
+    enabled: yes
+    daemon_reload: yes

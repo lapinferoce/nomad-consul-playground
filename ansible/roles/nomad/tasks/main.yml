@@ -1,0 +1,58 @@
+---
+- name: working in /opt
+  file:
+    path: '{{item}}'
+    state: directory
+    mode: 755
+    owner: root
+    group: root
+    recurse: yes
+  with_items:
+      - /opt/nomad
+      - /opt/etc/nomad
+      - /opt/bin
+      - /opt/var/lib/nomad 
+      - "/opt/tmp/nomad/{{inventory_hostname}}"
+
+- name: unarchive nomad 
+  unarchive:
+    src: nomad_0.8.7_linux_amd64.zip
+    dest: /opt/nomad
+
+- name: linking nomad exec
+  file:
+    src: /opt/nomad/nomad
+    dest: /opt/bin/nomad
+    state: link
+
+
+- name: set config file
+  template:
+    src: nomad-server.hcl.j2
+    dest: /opt/etc/nomad/nomad-server.hcl
+  when: inventory_hostname in groups['nomad-master']
+
+- name: set systemd service file
+  template:
+    src: nomad-server.service.j2
+    dest: /usr/lib/systemd/system/nomad.service
+  when: inventory_hostname in groups['nomad-master']
+
+- name: set config file
+  template:
+    src: nomad-client.hcl.j2
+    dest: /opt/etc/nomad/nomad-client.hcl
+  when: inventory_hostname in groups['nomad-node']
+
+- name: set systemd service file
+  template:
+    src: nomad-client.service.j2
+    dest: /usr/lib/systemd/system/nomad.service
+  when: inventory_hostname in groups['nomad-node']
+
+- name: enable systemd nomad
+  systemd:
+    name: nomad
+    enabled: no
+    state: restarted
+    daemon_reload: yes

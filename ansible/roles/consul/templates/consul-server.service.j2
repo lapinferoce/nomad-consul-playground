@@ -1,0 +1,21 @@
+[Unit]
+Description=Consul service discovery agent
+Requires=network-online.target
+After=network.target
+
+[Service]
+User=root
+Group=root
+PIDFile=/run/consul/consul.pid
+Restart=on-failure
+Environment=GOMAXPROCS=2
+ExecStartPre=/usr/bin/rm -f /opt/run/consul/consul.pid
+# ExecStartPre=/opt/bin/consul configtest -config-dir=/opt/etc/consul.d
+ExecStart=/opt/bin/consul agent -server -ui  --bootstrap-expect=3  -data-dir=/opt/tmp/consul/  -node={{ inventory_hostname }}  -config-dir=/opt/etc/consul.d -pid-file=/opt/run/consul/consul.pid  -bind={{ ansible_host }}
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target  
+#-bind={{ ansible_host }}

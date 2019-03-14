@@ -1,0 +1,64 @@
+---
+- name: working in /opt
+  file:
+    path: '{{item}}'
+    state: directory
+    mode: 755
+    owner: root
+    group: root
+    recurse: yes
+  with_items:
+      - /opt/consul
+      - /opt/etc/consul 
+      - /opt/etc/consul.d
+      - /opt/bin
+      - /opt/var/lib/consul 
+      - /opt/tmp/consul
+      - /opt/run/consul 
+
+- name: unarchive consul 
+  unarchive:
+    src: consul_1.4.3_linux_amd64.zip
+    dest: /opt/consul
+
+- name: linking consul exec
+  file:
+    src: /opt/consul/consul
+    dest: /opt/bin/consul
+    state: link
+
+- name: set systemd service file
+  template:
+    src: consul-server.service.j2
+    dest: /usr/lib/systemd/system/consul.service
+  when: inventory_hostname in groups['consul-server']
+
+- name: set systemd service file
+  template:
+    src: consul-agent.service.j2
+    dest: /usr/lib/systemd/system/consul.service
+  when: inventory_hostname in groups['consul-agent']
+
+- name: enable systemd consul
+  systemd:
+    name: consul
+    enabled: yes 
+    state:  restarted
+    daemon_reload: yes
+
+
+
+
+
+
+
+  #- name: enable systemd consul
+  #  systemd:
+  #    name: consul
+  #    enabled: yes
+  #    state:  started
+  #    daemon_reload: yes
+
+- name: join consul cluster
+  shell: |
+    /opt/bin/consul join {{ groups['all']|join(" ") }}

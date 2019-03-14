@@ -1,0 +1,17 @@
+# Increase log verbosity
+
+log_level = "DEBUG"
+
+# Setup data dir
+
+data_dir = "/opt/etc/nomad"
+
+server {
+
+  enabled = true
+  bootstrap_expect = {{ groups['nomad-master']|length }} 
+# 
+  server_join {
+     retry_join =  [{% for host in groups['nomad-master'] %}"{{hostvars[host]['ansible_host']}}:4648"{% if not loop.last %},{% endif %}{% endfor%}]
+  }
+}

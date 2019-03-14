@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: yes
+  vars:
+  roles:
+    - common
+    - add-tools
+    - consul
+    - nomad
+
+
+- hosts: nomad-node
+  become: yes
+  roles:
+    - docker
+    - java
+    - rkt

@@ -1,0 +1,12 @@
+---
+- name: installing rocket
+  dnf:
+    name: rkt
+    state: latest
+
+- name: starting rkt service
+  systemd:
+    name: rkt-metadata
+    enabled: yes
+    state: started
+    daemon_reload: yes

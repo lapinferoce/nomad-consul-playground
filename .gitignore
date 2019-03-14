@@ -1,0 +1,9 @@
+notes
+Readme.md
+**/*.qcow2
+**/*.tfstate*
+**/*.zip
+**/*.tgz
+**/.terraform
+keys/**
+

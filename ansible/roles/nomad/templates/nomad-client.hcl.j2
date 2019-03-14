@@ -1,0 +1,25 @@
+# Increase log verbosity
+
+log_level="DEBUG"
+
+data_dir="/opt/etc/nomad"
+
+client {
+  enabled = true
+  node_class="node"
+
+  servers = [{% for host in groups['nomad-master'] %}"{{hostvars[host]['ansible_host']}}:4647"{% if not loop.last %},{% endif %}{% endfor%}] #HERE we assume the  ip 
+
+ options = {
+
+#   "docker.privileged.enabled"="true"
+#   "docker.volumes.enabled"="true"
+    driver.raw_exec.enable = "1"
+    driver.rkt.enable = "1"
+ }
+
+}
+
+ports {
+  http = 5656
+}

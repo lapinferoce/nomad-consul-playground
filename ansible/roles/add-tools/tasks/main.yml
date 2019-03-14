@@ -1,0 +1,10 @@
+---
+- name: adding tools
+  dnf:
+    name:
+      - vim
+      - git
+      - tmux
+      - htop
+      - unzip
+    state: present

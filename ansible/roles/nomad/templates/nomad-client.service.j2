@@ -1,0 +1,17 @@
+[Unit]
+
+Description=Nomad client
+
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+ExecStart= /bin/sh -c "/opt/bin/nomad agent -config /opt/etc/nomad/nomad-client.hcl -bind={{ ansible_host }}"
+
+Restart=always
+RestartSec=10
+
+[Install]
+
+WantedBy=multi-user.target
