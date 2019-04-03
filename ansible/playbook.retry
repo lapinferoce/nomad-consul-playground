@@ -1,2 +1,7 @@
 nomad-master0
+nomad-master1
 nomad-master2
+nomad-node0
+nomad-node1
+nomad-node2
+nomad-node3

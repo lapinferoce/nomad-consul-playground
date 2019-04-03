@@ -1,0 +1,26 @@
+---
+
+- name: install ing named
+  yum:
+    name: bind
+    state: present
+
+- name: configuring named
+  lineinfile:
+    path: /etc/named.conf
+    state: present
+    line: include "/etc/named/consul.conf"; 
+
+
+- name: adding consul zone
+  template:
+    src: consul.conf.j2
+    dest: /etc/named/consul.conf
+
+- name: starting all 
+  systemd:
+    name: named
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+   

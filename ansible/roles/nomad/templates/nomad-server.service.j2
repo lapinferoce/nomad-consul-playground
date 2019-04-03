@@ -5,12 +5,17 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-
+ExecReload=/bin/kill -HUP $MAINPID
 ExecStart= /bin/sh -c "/opt/bin/nomad agent -config=/opt/etc/nomad/nomad-server.hcl -bind={{ ansible_host}}"
-
-Restart=always
-RestartSec=10
+KillMode=process
+KillSignal=SIGINT
+LimitNOFILE=infinity
+LimitNPROC=infinity
+Restart=on-failure
+RestartSec=2
+StartLimitBurst=3
+StartLimitIntervalSec=10
+TasksMax=infinity
 
 [Install]
-
 WantedBy=multi-user.target

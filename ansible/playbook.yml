@@ -1,7 +1,12 @@
 ---
-- hosts: all
+- hosts: localhost
+  connection: local
   become: yes
-  vars:
+  roles:
+    - dns
+
+- hosts: nomad-master
+  become: yes
   roles:
     - common
     - add-tools
@@ -12,6 +17,15 @@
 - hosts: nomad-node
   become: yes
   roles:
+    - common
+    - add-tools
+    - consul
+    - nomad
     - docker
     - java
     - rkt
+
+- hosts: nomad-node0
+  become: yes
+  roles:
+    - consul2dns
